@@ -21,6 +21,4 @@ private:
 	void allocateMemoryToGridVariables();
 	void initGrid();
 	void initGrid(int sharkPercent, int fishPercent);
-
-	int getRandomNumber(int min, int max);
 };

@@ -1,8 +1,8 @@
 #include"stdafx.h"
 #include"Grid.h"
+#include"Utils.h"
 
 #include<iostream>
-#include<random>
 
 //Instantiates a grid with the given number of rows and columns
 Grid::Grid(int rows, int cols)
@@ -13,10 +13,6 @@ Grid::Grid(int rows, int cols)
 
 	//Allocates memory for the two grid variables
 	allocateMemoryToGridVariables();
-
-	//Set the seed for the random number generator
-	//Setting a constant number as the seed will allow us to replicate the results
-	srand(16897);
 
 	//Fill the grid with values
 	initGrid(25, 25);
@@ -87,7 +83,7 @@ void Grid::initGrid()
 		for (int col = 1; col < cols - 1; ++col)
 		{
 			//because getRandomNumber cannot return negative values, if it returns 2 we count it as a shark
-			currentGrid[row][col] = getRandomNumber(0, 2);
+			currentGrid[row][col] = Utils::getRandomNumber(0, 2);
 			if (currentGrid[row][col] == 2)
 				currentGrid[row][col] = -1;
 		}
@@ -106,7 +102,7 @@ void Grid::initGrid(int sharkPercent, int fishPercent)
 	{
 		for (int col = 1; col < cols - 1; ++col)
 		{
-			int temp = getRandomNumber(1, 100);
+			int temp = Utils::getRandomNumber(1, 100);
 			if (temp <= sharkUpperLimit)
 				currentGrid[row][col] = -1;	//shark
 			else if (temp <= fishUpperLimit)
@@ -115,12 +111,4 @@ void Grid::initGrid(int sharkPercent, int fishPercent)
 				currentGrid[row][col] = 0;	//water
 		}
 	}
-}
-
-//Generates a random number between min and max, both inclusive; doesn't work with negative values
-int Grid::getRandomNumber(int min, int max)
-{
-	static const double fraction = 1.0 / (1.0 + RAND_MAX);
-
-	return min + static_cast<int>((max - min + 1) * (rand() * fraction));
 }
