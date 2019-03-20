@@ -17,6 +17,7 @@ public:
 	float runTest(int nIterations);
 	void calculateNextGridState();
 	void goToNextGridState();
+	void showGridAsImage();
 
 private:
 	int **currentGrid, **nextCalculatedGrid;

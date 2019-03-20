@@ -4,6 +4,7 @@
 
 #include<iostream>
 #include<ctime>
+#include<opencv2\opencv.hpp>
 
 //Instantiates a grid with the given number of rows and columns
 Grid::Grid(int rows, int cols)
@@ -16,7 +17,7 @@ Grid::Grid(int rows, int cols)
 	allocateMemoryToGridVariables();
 
 	//Fill the grid with values
-	initGrid(20, 70);
+	initGrid(17, 65);
 }
 
 Grid::~Grid()
@@ -147,6 +148,36 @@ void Grid::calculateNextGridState()
 			}
 		}
 	}
+}
+
+//Shows the grid as an image using OpenCV (displays the image in a new window)
+void Grid::showGridAsImage()
+{
+	using namespace cv;
+
+	Vec3b waterColour = Vec3b(255, 153, 153);	//light blue
+	Vec3b fishColour = Vec3b(102, 0, 204);		//maroon
+	Vec3b sharkColour = Vec3b(51, 255, 255);	//yellow
+
+	//Create the image (pixels will be empty)
+	Mat gridImage = Mat(rows, cols, CV_8UC3);
+
+	//Assign a colour to each pixel depending on what the corresponding cell contains
+	for (int row = 1; row < rows - 1; ++row)
+	{
+		for (int col = 1; col < cols - 1; ++col)
+		{
+			if (currentGrid[row][col] > 0)			//fish
+				gridImage.at<Vec3b>(Point(row, col)) = fishColour;
+			else if (currentGrid[row][col] == 0)	//empty
+				gridImage.at<Vec3b>(Point(row, col)) = waterColour;
+			else									//shark
+				gridImage.at<Vec3b>(Point(row, col)) = sharkColour;
+		}
+	}
+	
+	cv::imshow("Sharks and Fish", gridImage);
+	cv::waitKey(0);
 }
 
 //======PRIVATE MEMBERS===========================================================================
