@@ -11,8 +11,12 @@ class Grid
 {
 public:
 	Grid(int rows, int cols);
-	void printGridToConsole(char shark = 'X', char fish = 'f', char water = '.');
+	~Grid();
+	void printToConsole(char shark = 'X', char fish = 'f', char water = '.');
 	void printStatsToConsole();
+	float runTest(int nIterations);
+	void calculateNextGridState();
+	void goToNextGridState();
 
 private:
 	int **currentGrid, **nextCalculatedGrid;
@@ -21,4 +25,6 @@ private:
 	void allocateMemoryToGridVariables();
 	void initGrid();
 	void initGrid(int sharkPercent, int fishPercent);
+	void updateGhostCells();
+	void getNeighbourCount(int row, int col, int &outSharkCount, int &outFishCount);
 };
