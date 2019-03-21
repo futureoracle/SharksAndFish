@@ -8,11 +8,11 @@ These are represented by integers:
 ==0 = water
 For sharks and fish, the absolute value of the integer corresponds to their age.
 eg- A cell with value -5 contains a 5-year-old shark.*/
-class Grid
+class GridOMP
 {
 public:
-	Grid(int rows, int cols);
-	~Grid();
+	GridOMP(int rows, int cols);
+	~GridOMP();
 	void printToConsole(char shark = 'X', char fish = 'f', char water = '.');
 	void printStatsToConsole();
 	float runTest(int nIterations);

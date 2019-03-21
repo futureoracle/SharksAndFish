@@ -1,13 +1,16 @@
 #include"stdafx.h"
-#include"Grid.h"
+#include"GridOMP.h"
 #include"Utils.h"
 
 #include<iostream>
 #include<ctime>
 #include<opencv2\opencv.hpp>
+#include<omp.h>
+
+#define N_THREADS 2
 
 //Instantiates a grid with the given number of rows and columns
-Grid::Grid(int rows, int cols)
+GridOMP::GridOMP(int rows, int cols)
 {
 	//Add 2 extra rows and columns to make space for ghost cells
 	this->rows = rows + 2;
@@ -17,10 +20,10 @@ Grid::Grid(int rows, int cols)
 	allocateMemoryToGridVariables();
 
 	//Fill the grid with values
-	initGrid(20, 55);
+	initGrid(24, 62);
 }
 
-Grid::~Grid()
+GridOMP::~GridOMP()
 {
 	for (int i = 0; i < rows; ++i)
 	{
@@ -32,7 +35,7 @@ Grid::~Grid()
 }
 
 //Prints the contents of the current grid to the console in the form of characters
-void Grid::printToConsole(char shark, char fish, char water)
+void GridOMP::printToConsole(char shark, char fish, char water)
 {
 	//In the for loops, the first and last row and column are excluded because they are ghost cells
 	for (int row = 1; row < rows - 1; ++row)
@@ -51,7 +54,7 @@ void Grid::printToConsole(char shark, char fish, char water)
 }
 
 //Prints the grid's stats, such as the count of shark and fish
-void Grid::printStatsToConsole()
+void GridOMP::printStatsToConsole()
 {
 	int sharkCount = 0, fishCount = 0, waterCount = 0;
 
@@ -74,7 +77,7 @@ void Grid::printStatsToConsole()
 }
 
 //Runs the grid according to the rules for nIterations, and returns the time it took to complete
-float Grid::runTest(int nIterations)
+float GridOMP::runTest(int nIterations)
 {
 	float startTime = clock();
 	for (int i = 0; i < nIterations; ++i)
@@ -86,7 +89,7 @@ float Grid::runTest(int nIterations)
 }
 
 //Equates the currentGrid to the nextCalculatedGrid
-void Grid::goToNextGridState()
+void GridOMP::goToNextGridState()
 {
 	//In the for loops, the first and last row and column are excluded because they are ghost cells, which are not copied
 	for (int row = 1; row < rows - 1; ++row)
@@ -99,7 +102,7 @@ void Grid::goToNextGridState()
 }
 
 //Evaluates the rules of the celluar automata and puts values in the nextCalculatedGrid based on them
-void Grid::calculateNextGridState()
+void GridOMP::calculateNextGridState()
 {
 	updateGhostCells();
 
@@ -151,7 +154,7 @@ void Grid::calculateNextGridState()
 }
 
 //Shows the grid as an image using OpenCV (displays the image in a new window)
-void Grid::showGridAsImage(std::string additionalInfo)
+void GridOMP::showGridAsImage(std::string additionalInfo)
 {
 	using namespace cv;
 
@@ -159,7 +162,7 @@ void Grid::showGridAsImage(std::string additionalInfo)
 	Vec3b fishColour = Vec3b(102, 0, 204);		//maroon
 	Vec3b sharkColour = Vec3b(51, 255, 255);	//yellow
 
-	//Create the image (pixels will be empty)
+												//Create the image (pixels will be empty)
 	Mat gridImage = Mat(rows, cols, CV_8UC3);
 
 	//Assign a colour to each pixel depending on what the corresponding cell contains
@@ -175,7 +178,7 @@ void Grid::showGridAsImage(std::string additionalInfo)
 				gridImage.at<Vec3b>(Point(row, col)) = sharkColour;
 		}
 	}
-	
+
 	cv::imshow("Sharks and Fish" + std::string(" ") + additionalInfo, gridImage);
 	cv::waitKey(0);
 }
@@ -183,7 +186,7 @@ void Grid::showGridAsImage(std::string additionalInfo)
 //======PRIVATE MEMBERS===========================================================================
 
 //Allocates new memory to currentGrid and nextCalculatedGrid based on this Grid's rows and cols
-void Grid::allocateMemoryToGridVariables()
+void GridOMP::allocateMemoryToGridVariables()
 {
 	currentGrid = new int*[rows];
 	for (int row = 0; row < rows; ++row)
@@ -195,7 +198,7 @@ void Grid::allocateMemoryToGridVariables()
 }
 
 //Initializes the grid randomly
-void Grid::initGrid()
+void GridOMP::initGrid()
 {
 	//In the for loops, the first and last row and column are excluded because they are ghost cells
 	for (int row = 1; row < rows - 1; ++row)
@@ -212,7 +215,7 @@ void Grid::initGrid()
 
 //Initializes the grid and tries to keep the percentage of sharks, fish, and water cells as specified in the parameters
 //Both the parameters must be between 0 and 100, and their sum must not exceed 100
-void Grid::initGrid(int sharkPercent, int fishPercent)
+void GridOMP::initGrid(int sharkPercent, int fishPercent)
 {
 	int sharkUpperLimit = sharkPercent;
 	int fishUpperLimit = sharkPercent + fishPercent;
@@ -234,7 +237,7 @@ void Grid::initGrid(int sharkPercent, int fishPercent)
 }
 
 //Updates the ghost cells of the current grid 
-void Grid::updateGhostCells()
+void GridOMP::updateGhostCells()
 {
 	//rows
 	for (int col = 1; col < cols - 1; ++col)
@@ -265,7 +268,7 @@ void Grid::updateGhostCells()
 //Both of the arguments will be stored in the form 10 * number + number that can breed
 //eg - If there are 5 fish neighbours out of which 3 are of breeding age, the value of outFishCount will be stored as
 //10 * 5 + 3 = 53. This implies that the first digit will always be equal to or greater than the second.
-void Grid::getNeighbourCount(int row, int col, int &outSharkCount, int &outFishCount)
+void GridOMP::getNeighbourCount(int row, int col, int &outSharkCount, int &outFishCount)
 {
 	outFishCount = 0;
 	outSharkCount = 0;
