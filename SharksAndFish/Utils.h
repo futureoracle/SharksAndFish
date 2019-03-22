@@ -2,6 +2,6 @@
 
 namespace Utils
 {
-	void initUtils();
+	void initUtils(int randSeed = 16897);
 	int getRandomNumber(int min, int max);
 }

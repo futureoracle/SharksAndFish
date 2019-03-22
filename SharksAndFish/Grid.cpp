@@ -17,7 +17,7 @@ Grid::Grid(int rows, int cols)
 	allocateMemoryToGridVariables();
 
 	//Fill the grid with values
-	initGrid(20, 55);
+	initGrid(15, 60);
 }
 
 Grid::~Grid()
@@ -160,7 +160,7 @@ void Grid::showGridAsImage(std::string additionalInfo)
 	Vec3b sharkColour = Vec3b(51, 255, 255);	//yellow
 
 	//Create the image (pixels will be empty)
-	Mat gridImage = Mat(rows, cols, CV_8UC3);
+	Mat gridImage = Mat(rows - 2, cols - 2, CV_8UC3);
 
 	//Assign a colour to each pixel depending on what the corresponding cell contains
 	for (int row = 1; row < rows - 1; ++row)
@@ -168,11 +168,11 @@ void Grid::showGridAsImage(std::string additionalInfo)
 		for (int col = 1; col < cols - 1; ++col)
 		{
 			if (currentGrid[row][col] > 0)			//fish
-				gridImage.at<Vec3b>(Point(row, col)) = fishColour;
+				gridImage.at<Vec3b>(row - 1, col - 1) = fishColour;
 			else if (currentGrid[row][col] == 0)	//empty
-				gridImage.at<Vec3b>(Point(row, col)) = waterColour;
+				gridImage.at<Vec3b>(row - 1, col - 1) = waterColour;
 			else									//shark
-				gridImage.at<Vec3b>(Point(row, col)) = sharkColour;
+				gridImage.at<Vec3b>(row - 1, col - 1) = sharkColour;
 		}
 	}
 	

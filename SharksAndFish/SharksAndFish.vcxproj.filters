@@ -30,6 +30,12 @@
     <ClInclude Include="GridOMP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GridMPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridHybrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GridOMP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridMPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridHybrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

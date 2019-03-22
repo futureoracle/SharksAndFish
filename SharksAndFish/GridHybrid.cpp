@@ -1,24 +1,28 @@
 #include"stdafx.h"
-#include"GridOMP.h"
+#include"GridHybrid.h"
 #include"Utils.h"
 
 #include<iostream>
 #include<ctime>
+#include<mpi.h>
 #include<opencv2\opencv.hpp>
-#include<omp.h>
 
-#define N_THREADS 4
+//NOTE: The terms 'machine(s)' and 'process(ess)' have been used interchaneably throughout the comments of this file.
 
+#define N_THREADS 2
+//The number of machines / processes that the program is to be run on. This need to be the same as the number in the .bat file.
+constexpr int nMachines = 4;
 
 //Evaluates the rules of the celluar automata and puts values in the nextCalculatedGrid based on them
-void GridOMP::calculateNextGridState()
+void GridHybrid::calculateNextGridState()
 {
 	updateGhostCells();
 
 	int nSharkNeighbours, nFishNeighbours, nBreedingSharks, nBreedingFish;
-	//In the for loops, the first and last row and column are excluded because they are ghost cells
+
 #pragma omp parallel num_threads(N_THREADS) private(nSharkNeighbours, nFishNeighbours, nBreedingSharks, nBreedingFish)
 #pragma omp for schedule(guided)
+	//In the for loops, the first and last row and column are excluded because they are ghost cells
 	for (int row = 1; row < rows - 1; ++row)
 	{
 		for (int col = 1; col < cols - 1; ++col)
@@ -65,45 +69,16 @@ void GridOMP::calculateNextGridState()
 }
 
 //Runs the grid according to the rules for nIterations, and returns the time it took to complete
-float GridOMP::runTest(int nIterations)
+float GridHybrid::runTest(int nIterations)
 {
 	float startTime = clock();
 	for (int i = 0; i < nIterations; ++i)
 	{
 		calculateNextGridState();
 		goToNextGridState();
+		//To make sure all the machines are at the same stage
+		MPI_Barrier(MPI_COMM_WORLD);
 	}
+	stitchGrid();
 	return clock() - startTime;
-}
-
-//Shows the grid as an image using OpenCV (displays the image in a new window)
-void GridOMP::showGridAsImage(std::string additionalInfo)
-{
-	using namespace cv;
-
-	Vec3b waterColour = Vec3b(255, 153, 153);	//light blue
-	Vec3b fishColour = Vec3b(102, 0, 204);		//maroon
-	Vec3b sharkColour = Vec3b(51, 255, 255);	//yellow
-
-												//Create the image (pixels will be empty)
-	Mat gridImage = Mat(rows - 2, cols - 2, CV_8UC3);
-
-#pragma omp parallel num_threads(N_THREADS)
-#pragma omp for schedule(guided)
-	//Assign a colour to each pixel depending on what the corresponding cell contains
-	for (int row = 1; row < rows - 1; ++row)
-	{
-		for (int col = 1; col < cols - 1; ++col)
-		{
-			if (currentGrid[row][col] > 0)			//fish
-				gridImage.at<Vec3b>(row - 1, col - 1) = fishColour;
-			else if (currentGrid[row][col] == 0)	//empty
-				gridImage.at<Vec3b>(row - 1, col - 1) = waterColour;
-			else									//shark
-				gridImage.at<Vec3b>(row - 1, col - 1) = sharkColour;
-		}
-	}
-
-	cv::imshow("Sharks and Fish" + std::string(" ") + additionalInfo, gridImage);
-	cv::waitKey(0);
 }

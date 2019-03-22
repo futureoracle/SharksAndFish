@@ -8,11 +8,11 @@ These are represented by integers:
 ==0 = water
 For sharks and fish, the absolute value of the integer corresponds to their age.
 eg- A cell with value -5 contains a 5-year-old shark.*/
-class Grid
+class GridMPI
 {
 public:
-	Grid(int rows, int cols);
-	~Grid();
+	GridMPI(int rows, int cols);
+	~GridMPI();
 	void printToConsole(char shark = 'X', char fish = 'f', char water = '.');
 	void printStatsToConsole();
 	float runTest(int nIterations);
@@ -23,10 +23,13 @@ public:
 protected:
 	int **currentGrid, **nextCalculatedGrid;
 	int rows, cols;
+	int rank, totalRows;
+	int *rowsPerMachine;
 
 	void allocateMemoryToGridVariables();
 	void initGrid();
 	void initGrid(int sharkPercent, int fishPercent);
 	void updateGhostCells();
 	void getNeighbourCount(int row, int col, int &outSharkCount, int &outFishCount);
+	void stitchGrid();
 };

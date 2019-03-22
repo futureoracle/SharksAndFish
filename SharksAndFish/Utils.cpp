@@ -4,11 +4,11 @@
 #include<random>
 
 //Performs the required initialization for the util functions
-void Utils::initUtils()
+void Utils::initUtils(int randomSeed)
 {
 	//Set the seed for the random number generator
 	//Setting a constant number as the seed will allow us to replicate the results
-	srand(16897);
+	srand(randomSeed);
 }
 
 //Generates a random number between min and max, both inclusive; doesn't work with negative values
