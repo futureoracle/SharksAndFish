@@ -348,7 +348,7 @@ void GridMPI::updateGhostCells()
 	MPI_Recv(currentGrid[rows - 1], cols, MPI_INT, nextRank, upTag, MPI_COMM_WORLD, &status);
 
 	//Send this process' actual lower row to the next process
-	MPI_Send(currentGrid[rows - 1], cols, MPI_INT, nextRank, downTag, MPI_COMM_WORLD);
+	MPI_Send(currentGrid[rows - 2], cols, MPI_INT, nextRank, downTag, MPI_COMM_WORLD);
 	//Recieve the top ghost row from the previous process
 	MPI_Recv(currentGrid[0], cols, MPI_INT, prevRank, downTag, MPI_COMM_WORLD, &status);
 
