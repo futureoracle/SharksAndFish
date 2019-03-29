@@ -11,7 +11,7 @@
 
 
 //The number of machines / processes that the program is to be run on. This need to be the same as the number in the .bat file.
-constexpr int nMachines = 4;
+constexpr int nMachines = 2;
 
 //Instantiates a grid with the given number of rows and columns
 GridMPI::GridMPI(int rows, int cols)
@@ -59,7 +59,7 @@ GridMPI::GridMPI(int rows, int cols)
 		allocateMemoryToGridVariables();
 
 		//Fill the grid with values
-		initGrid(15, 60);
+		initGrid(25, 50);
 
 		//showGridAsImage("Initial Grid");
 
@@ -214,6 +214,8 @@ void GridMPI::calculateNextGridState()
 					nextCalculatedGrid[row][col] = 1;	//spawn fish
 				else if (nSharkNeighbours >= 4 && nBreedingSharks >= 3 && nFishNeighbours < 4)	//shark can spawn
 					nextCalculatedGrid[row][col] = -1;	//spawn shark
+				else	//nothing happens; cell stays empty
+					nextCalculatedGrid[row][col] = 0;
 			}
 			else if (currentGrid[row][col] > 0)	//cell has a fish
 			{
@@ -230,7 +232,7 @@ void GridMPI::calculateNextGridState()
 			{
 				if (nSharkNeighbours >= 6 && nFishNeighbours == 0)	//starvation; shark dies
 					nextCalculatedGrid[row][col] = 0;
-				else if (Utils::getRandomNumber(1, 32) == 1)	//random causes; shark dies. bad luck.
+				else if (Utils::getRandomNumber(1, 64) == 1)	//random causes; shark dies. bad luck.
 					nextCalculatedGrid[row][col] = 0;
 				else if (currentGrid[row][col] == -20)	//reached max age; shark dies
 					nextCalculatedGrid[row][col] = 0;
@@ -299,6 +301,14 @@ void GridMPI::initGrid()
 				currentGrid[row][col] = -1;
 		}
 	}
+
+	for (int row = 1; row < rows - 1; ++row)
+	{
+		for (int col = 1; col < cols - 1; ++col)
+		{
+			nextCalculatedGrid[row][col] = 0;
+		}
+	}
 }
 
 //Initializes the grid and tries to keep the percentage of sharks, fish, and water cells as specified in the parameters
@@ -320,6 +330,14 @@ void GridMPI::initGrid(int sharkPercent, int fishPercent)
 				currentGrid[row][col] = 1;	//fish
 			else
 				currentGrid[row][col] = 0;	//water
+		}
+	}
+
+	for (int row = 1; row < rows - 1; ++row)
+	{
+		for (int col = 1; col < cols - 1; ++col)
+		{
+			nextCalculatedGrid[row][col] = 0;
 		}
 	}
 }
@@ -495,6 +513,7 @@ void GridMPI::stitchGrid()
 			}
 		}
 
+
 		//deallocate memory to previous (smaller) grid on machine 0
 		for (int i = 0; i < rows; ++i)
 		{
@@ -509,7 +528,7 @@ void GridMPI::stitchGrid()
 		//make the whole grid the current grid
 		currentGrid = completeGrid;
 		rows = totalRows + 2;
-
+		
 		//display
 		//showGridAsImage("Final Grid");
 	}

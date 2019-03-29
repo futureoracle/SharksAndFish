@@ -17,7 +17,7 @@ Grid::Grid(int rows, int cols)
 	allocateMemoryToGridVariables();
 
 	//Fill the grid with values
-	initGrid(15, 60);
+	initGrid(25, 50);
 }
 
 Grid::~Grid()
@@ -123,6 +123,9 @@ void Grid::calculateNextGridState()
 					nextCalculatedGrid[row][col] = 1;	//spawn fish
 				else if (nSharkNeighbours >= 4 && nBreedingSharks >= 3 && nFishNeighbours < 4)	//shark can spawn
 					nextCalculatedGrid[row][col] = -1;	//spawn shark
+				else	//nothing happens; cell stays empty
+					nextCalculatedGrid[row][col] = 0;
+
 			}
 			else if (currentGrid[row][col] > 0)	//cell has a fish
 			{
@@ -208,6 +211,14 @@ void Grid::initGrid()
 				currentGrid[row][col] = -1;
 		}
 	}
+
+	for (int row = 1; row < rows - 1; ++row)
+	{
+		for (int col = 1; col < cols - 1; ++col)
+		{
+			nextCalculatedGrid[row][col] = 0;
+		}
+	}
 }
 
 //Initializes the grid and tries to keep the percentage of sharks, fish, and water cells as specified in the parameters
@@ -229,6 +240,14 @@ void Grid::initGrid(int sharkPercent, int fishPercent)
 				currentGrid[row][col] = 1;	//fish
 			else
 				currentGrid[row][col] = 0;	//water
+		}
+	}
+
+	for (int row = 1; row < rows - 1; ++row)
+	{
+		for (int col = 1; col < cols - 1; ++col)
+		{
+			nextCalculatedGrid[row][col] = 0;
 		}
 	}
 }

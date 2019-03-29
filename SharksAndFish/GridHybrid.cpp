@@ -10,8 +10,6 @@
 //NOTE: The terms 'machine(s)' and 'process(ess)' have been used interchaneably throughout the comments of this file.
 
 #define N_THREADS 2
-//The number of machines / processes that the program is to be run on. This need to be the same as the number in the .bat file.
-constexpr int nMachines = 4;
 
 //Evaluates the rules of the celluar automata and puts values in the nextCalculatedGrid based on them
 void GridHybrid::calculateNextGridState()

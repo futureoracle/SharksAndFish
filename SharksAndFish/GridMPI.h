@@ -13,7 +13,7 @@ class GridMPI
 public:
 	GridMPI(int rows, int cols);
 	~GridMPI();
-	void printToConsole(char shark = 'X', char fish = 'f', char water = '.');
+	void printToConsole(char shark = 'X', char fish = 'F', char water = ' ');
 	void printStatsToConsole();
 	float runTest(int nIterations);
 	void calculateNextGridState();

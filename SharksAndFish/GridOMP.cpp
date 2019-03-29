@@ -7,7 +7,7 @@
 #include<opencv2\opencv.hpp>
 #include<omp.h>
 
-#define N_THREADS 4
+#define N_THREADS 12
 
 
 //Evaluates the rules of the celluar automata and puts values in the nextCalculatedGrid based on them
@@ -53,7 +53,7 @@ void GridOMP::calculateNextGridState()
 			{
 				if (nSharkNeighbours >= 6 && nFishNeighbours == 0)	//starvation; shark dies
 					nextCalculatedGrid[row][col] = 0;
-				else if (Utils::getRandomNumber(1, 32) == 1)	//random causes; shark dies. bad luck.
+				else if (Utils::getRandomNumber(1, 53) == 1)	//random causes; shark dies. bad luck.
 					nextCalculatedGrid[row][col] = 0;
 				else if (currentGrid[row][col] == -20)	//reached max age; shark dies
 					nextCalculatedGrid[row][col] = 0;
